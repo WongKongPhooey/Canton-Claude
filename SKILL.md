@@ -121,6 +121,28 @@ steps instead of retrying. It deliberately refuses to fall back to a Mandarin or
 English voice, because those read the same characters as completely different
 sounds.
 
+### The words.hk link
+
+Every word the script speaks is printed with its entry on words.hk (粵典):
+
+```
+  你好  https://words.hk/zidin/%E4%BD%A0%E5%A5%BD
+```
+
+**Pass that link on in your reply, every time you speak something.** It is the
+whole word's entry — definitions, example sentences, and recordings of real Hong
+Kong speakers, which is the one thing the synthetic voice cannot give them. A word
+they can click through on is worth a good deal more than a word they only heard.
+
+The links print before anything is spoken, so they still arrive when the machine
+has no Cantonese voice and the script exits 3. There the link *is* the answer —
+give it along with the setup steps, rather than reporting the run as a failure.
+
+Nothing is looked up over the network. The URL is the word itself,
+percent-encoded, so it costs nothing and is always well-formed. Whether words.hk
+carries an entry for an unusual word is its business — the script does not check,
+so offer the link, don't promise what is on the other end of it.
+
 ### What the audio is worth
 
 Be straight with the user about this. Synthetic Cantonese gets the syllable right
@@ -128,7 +150,9 @@ and the tone contour roughly right. That makes it genuinely useful for "wait, is
 that `si3` or `si6`" — checking you have the right tone on the right word. It is
 not good enough to copy for rhythm, stress or natural intonation, and it will
 sound flat next to a real speaker. For a model accent they want recordings of
-actual people, which the main Cantonese dictionaries — words.hk, Forvo — carry.
+actual people — which is where the words.hk link goes, and what Forvo carries
+too. Point them at it whenever they are trying to sound like someone, rather than
+just trying to tell two tones apart.
 
 ## The vocabulary log
 
@@ -159,7 +183,8 @@ lost a word.
 ## Things the user may ask for
 
 - **"Say that" / "how do I pronounce it?"** — look up the characters, run
-  `scripts/speak.sh`. See [Hearing it](#hearing-it).
+  `scripts/speak.sh`, and give them the words.hk link it prints. See
+  [Hearing it](#hearing-it).
 - **"What have I learned?"** — read the log and summarise: count, the words that
   are sticking, what is new this week.
 - **"Quiz me."** — pull from the log, weight toward `## Known` and words with

@@ -9,6 +9,10 @@
 # read "hou2" as English nonsense, which would teach the opposite of the point.
 # The vocabulary log stores characters alongside the Jyutping for this reason.
 #
+# Each word is printed with its words.hk (粵典) entry, where the definitions and
+# recordings of real speakers are. The links are printed before anything is
+# spoken, so they still arrive when this machine has no Cantonese voice.
+#
 # If no Cantonese voice is installed, this exits 3 and prints how to add one.
 # It deliberately does not fall back to a Mandarin or English voice: those read
 # the same characters with entirely different sounds, and a confident wrong
@@ -31,6 +35,30 @@ case "$platform" in
   MINGW*|MSYS*|CYGWIN*) kind=windows ;;
   *)      kind=unknown ;;
 esac
+
+# words.hk keys entries by the word itself, percent-encoded: 好 is
+# https://words.hk/zidin/%E5%A5%BD. Encode by hand rather than reaching for jq
+# or python, which are not guaranteed to be on the machine. LC_ALL=C makes the
+# loop walk UTF-8 one byte at a time, which is what percent-encoding needs.
+wordshk_url() {
+  local text="$1" out="" i c
+  local LC_ALL=C
+  for (( i = 0; i < ${#text}; i++ )); do
+    c="${text:i:1}"
+    case "$c" in
+      [a-zA-Z0-9._~-]) out="${out}${c}" ;;
+      *) out="${out}$(printf '%%%02X' "'$c")" ;;
+    esac
+  done
+  printf 'https://words.hk/zidin/%s' "$out"
+}
+
+print_links() {
+  local text
+  for text in "$@"; do
+    printf '  %s  %s\n' "$text" "$(wordshk_url "$text")"
+  done
+}
 
 no_voice() {
   echo "No Cantonese (zh-HK) voice installed." >&2
@@ -60,7 +88,6 @@ speak_macos() {
   [ -n "$voice" ] || return 1
   if [ "$list_only" -eq 1 ]; then echo "macOS voice: $voice (zh_HK)"; return 0; fi
   for text in "$@"; do
-    echo "  $text"
     say -v "$voice" -r 140 -- "$text"
     sleep 0.4
   done
@@ -79,7 +106,6 @@ speak_windows() {
     return 0
   fi
   for text in "$@"; do
-    echo "  $text"
     text_block="${text//\'/\'\'}"
     "$ps" -NoProfile -Command "
       Add-Type -AssemblyName System.Speech
@@ -99,11 +125,12 @@ speak_linux() {
   espeak-ng --voices 2>/dev/null | grep -q ' yue ' || return 1
   if [ "$list_only" -eq 1 ]; then echo "Linux voice: espeak-ng yue (synthetic, approximate tones)"; return 0; fi
   for text in "$@"; do
-    echo "  $text"
     espeak-ng -v yue -s 130 -- "$text"
     sleep 0.4
   done
 }
+
+[ "$list_only" -eq 1 ] || print_links "$@"
 
 case "$kind" in
   macos)   speak_macos   "$@" || no_voice ;;

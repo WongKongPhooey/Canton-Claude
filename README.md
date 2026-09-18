@@ -38,9 +38,22 @@ scripts/speak.sh 你好 多謝
 ```
 
 Pass characters, not Jyutping — speech engines read 好 correctly and read "hou2" as
-English nonsense. `scripts/speak.sh --list` reports which voice is installed
-without speaking; when none is, it prints that platform's setup steps and exits 3.
-A Cantonese (zh-HK) voice is needed:
+English nonsense. Each word is printed with its entry on
+[words.hk](https://words.hk) (粵典), where the definitions and the recordings of
+real speakers are:
+
+```
+  你好  https://words.hk/zidin/%E4%BD%A0%E5%A5%BD
+  多謝  https://words.hk/zidin/%E5%A4%9A%E8%AC%9D
+```
+
+The links print before anything is spoken, so you get them even on a machine with
+no Cantonese voice. Nothing is fetched over the network — the URL is the word
+itself, percent-encoded.
+
+`scripts/speak.sh --list` reports which voice is installed without speaking; when
+none is, it prints that platform's setup steps and exits 3. A Cantonese (zh-HK)
+voice is needed:
 
 - **macOS** — System Settings › Accessibility › Spoken Content › System Voice ›
   Manage Voices, then Chinese (Hong Kong) – Sinji.
@@ -52,8 +65,8 @@ A Cantonese (zh-HK) voice is needed:
 It deliberately refuses to fall back to a Mandarin or English voice, because those
 read the same characters as completely different sounds. Synthetic Cantonese is
 good enough to check you have the right tone on the right word, not good enough to
-copy for rhythm or intonation — for that, use recordings of real speakers on
-words.hk or Forvo.
+copy for rhythm or intonation — for that, follow the words.hk link, or use
+Forvo.
 
 ## Your vocabulary
 
