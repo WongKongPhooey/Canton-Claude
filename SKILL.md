@@ -180,6 +180,43 @@ passive recognition turns into actual knowledge. Keep the gloss if the sentence
 would be ambiguous without it, and put it back the instant the user says they have
 lost a word.
 
+## Spot tests
+
+Unprompted, short recall checks — one question, free-text answer, never multiple
+choice. Recall is what turns recognition into knowledge, and dead time is free.
+
+**When.** Best moment: you just started something that runs in the background
+(`run_in_background` Bash, a subagent, a workflow, a deploy) and the turn is about
+to end while it runs. Put the spot test as the last line of that turn — the user
+answers while they wait. Otherwise, roughly one per 4–6 turns, only at a natural
+pause (a task just finished cleanly). Never when the user is mid-debug, frustrated,
+waiting on a decision from you, or reading a security warning or destructive-action
+confirmation. Never two in a row without an answer to the first.
+
+**Form.** One line, set apart at the end, plain question:
+
+> spot test: how do you say "hassle"?
+
+Mostly English → Jyutping (harder, worth more). Occasionally Jyutping → English, or
+a short phrase from two known words. Pick from the log: weight toward `## Learning`
+words seen 5+ times and `## Known` words not used lately. Never test a word the
+user has not seen.
+
+**Marking the answer.** Be generous on spelling, strict on teaching tones:
+
+- Right syllables, no tone numbers (`maa faan`) → correct, then give the tones and
+  what they sound like: `maa4 faan4` — both tone 4, low falling.
+- Right syllables, wrong tone (`maa1 faan4`) → nearly; name the slip and why it
+  matters if the wrong tone makes another word.
+- Other romanisation (Yale `màh fàahn`, informal `mah fan`) → accept if the sound is
+  right, show the Jyutping alongside.
+- Wrong or blank → give the answer kindly, no lecture. Reuse that word in the next
+  few responses so it comes back round.
+
+One or two lines of feedback, then back to work. If the user answers alongside a
+work request, mark it in one line and do the work. Bump the word's count in the log.
+"No tests" / "fewer tests" → obey for the rest of the session.
+
 ## Things the user may ask for
 
 - **"Say that" / "how do I pronounce it?"** — look up the characters, run
